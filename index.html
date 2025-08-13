@@ -2,13 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KUDHIN BILL SPLITTER - MVR</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
 <style>
 :root {
   --primary: #1e88e5;
@@ -19,26 +14,104 @@
   --name-color: #1e88e5;
   --name-color-dark: #00ffff;
 }
-body { font-family: 'Segoe UI', sans-serif; max-width: 900px; margin: auto; padding: 20px; background-color: var(--light-bg); color: #222; transition: background-color 0.3s, color 0.3s; }
-h1 { text-align: center; color: var(--primary); margin-bottom: 15px; }
-.dark-mode { background-color: var(--dark-bg); color: #f5f5f5; }
-.dark-mode table,.dark-mode input,.dark-mode button,.dark-mode .result,.dark-mode .history-entry { background-color: var(--dark-card); color: #f5f5f5; border-color: #555; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 6px; overflow: hidden; }
-th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-th { background-color: var(--primary); color: white; }
-input[type=text], input[type=number], input[type=date] { width: 100%; padding: 6px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-button { background-color: var(--primary); color: white; border: none; border-radius: 5px; padding: 8px 14px; margin-top: 10px; cursor: pointer; font-size: 14px; transition: background-color 0.2s; }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  background-color: var(--light-bg);
+  color: #222;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+h1 {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 15px;
+}
+
+.dark-mode {
+  background-color: var(--dark-bg);
+  color: #f5f5f5;
+}
+
+.dark-mode table,
+.dark-mode input,
+.dark-mode button,
+.dark-mode .result,
+.dark-mode .history-entry {
+  background-color: var(--dark-card);
+  color: #f5f5f5;
+  border-color: #555;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: white;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: var(--primary);
+  color: white;
+}
+
+input[type=text], input[type=number], input[type=date] {
+  width: 100%;
+  padding: 6px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 14px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
 button:hover { background-color: var(--primary-dark); }
 .delete-btn { background-color: #e53935; }
 .delete-btn:hover { background-color: #c62828; }
-.result, .history-entry { margin-top: 20px; padding: 15px; border-radius: 8px; background: #e3f2fd; border: 1px solid #90caf9; }
-.name-highlight { color: var(--name-color); font-weight: bold; }
+
+.result, .history-entry {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+}
+
+.name-highlight {
+  color: var(--name-color);
+  font-weight: bold;
+}
+
 .dark-mode .name-highlight { color: var(--name-color-dark); }
+
 .tab-buttons { margin-bottom: 10px; }
 .tab-buttons button { margin-right: 5px; }
-@media (max-width: 600px) { table, tr, td, th { font-size: 14px; } }
-</style>
 
+@media (max-width: 600px) {
+  table, tr, td, th { font-size: 14px; }
+}
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
@@ -52,39 +125,205 @@ button:hover { background-color: var(--primary-dark); }
   <button onclick="showTab('summary')">Per Person Summary</button>
 </div>
 
+<!-- Main Tab -->
 <div id="main-tab">
   <table id="billTable">
-    <tr><th>Person</th><th colspan="4">Item Prices (MVR)</th><th>Action</th></tr>
+    <tr>
+      <th>Person</th>
+      <th colspan="4">Item Prices (MVR)</th>
+      <th>Action</th>
+    </tr>
   </table>
-  <button onclick="addRow()">➕ Add Person</button><br><br>
+
+  <button onclick="addRow()">➕ Add Person</button>
+  <br><br>
   <label>Service Charge (%): <input type="number" id="serviceChargePercent" value="0" step="0.01"></label><br><br>
   <label>Service Charge (Amount): <input type="number" id="serviceChargeAmount" value="0" step="0.01"></label><br><br>
   <button onclick="calculateBill()">✅ Calculate</button>
   <button onclick="downloadPDF()">📥 Download PDF</button>
+
   <div class="result" id="result"></div>
 </div>
 
+<!-- History Tab -->
 <div id="history-tab" style="display:none;">
   <h2>🕘 Bill History</h2>
   <label>Filter by Date: <input type="date" id="filterDate" onchange="renderHistory()"></label>
   <div id="historyContainer"></div>
 </div>
 
+<!-- Per Person Summary Tab -->
 <div id="summary-tab" style="display:none;">
   <h2>📊 Per Person Summary</h2>
   <div id="summaryContainer"></div>
 </div>
 
 <script>
-...
+let items = [];
 
-<script>
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js')
-  .then(()=>console.log('Service Worker Registered'))
-  .catch(err=>console.log(err));
+// Tabs
+function showTab(tab) {
+  document.getElementById("main-tab").style.display = tab==='main'? '': 'none';
+  document.getElementById("history-tab").style.display = tab==='history'? '': 'none';
+  document.getElementById("summary-tab").style.display = tab==='summary'? '': 'none';
 }
-</script>
 
+// Dark mode
+function toggleDarkMode() { document.body.classList.toggle("dark-mode"); }
+
+// Add/Delete rows
+function addRow(){
+  let table=document.getElementById("billTable");
+  let row=table.insertRow();
+  let cell1=row.insertCell(0);
+  let cells=[];
+  for(let i=1;i<=4;i++) cells.push(row.insertCell(i));
+  let cellLast=row.insertCell(5);
+  cell1.innerHTML='<input type="text" placeholder="Name">';
+  cells.forEach(c=>c.innerHTML='<input type="number" placeholder="0.00" step="0.01">');
+  cellLast.innerHTML='<button class="delete-btn" onclick="deleteRow(this)">🗑 Delete</button>';
+}
+function deleteRow(btn){ btn.parentNode.parentNode.remove(); }
+
+// Calculate bill
+function calculateBill(){
+  items=[];
+  let rows=document.getElementById("billTable").rows;
+  for(let i=1;i<rows.length;i++){
+    let name=rows[i].cells[0].querySelector("input").value.trim().toUpperCase();
+    let prices=[];
+    for(let j=1;j<=4;j++) prices.push(parseFloat(rows[i].cells[j].querySelector("input").value)||0);
+    let totalPrice=prices.reduce((a,b)=>a+b,0);
+    if(name && totalPrice>0) items.push({name,price:totalPrice});
+  }
+  if(items.length===0){ document.getElementById("result").innerHTML="⚠ Please enter at least one person with items."; return;}
+
+  let subtotal=items.reduce((sum,i)=>sum+i.price,0);
+  let scPercent=parseFloat(document.getElementById("serviceChargePercent").value)||0;
+  let scAmount=parseFloat(document.getElementById("serviceChargeAmount").value)||0;
+  let scTotal=subtotal*(scPercent/100)+scAmount;
+  let gst=(subtotal+scTotal)*0.08;
+  let total=subtotal+scTotal+gst;
+
+  let personTotals={};
+  items.forEach(item=>{
+    let share=item.price/subtotal;
+    personTotals[item.name]=item.price+(scTotal*share)+(gst*share);
+  });
+
+  let resultHTML=`<h2>📊 Bill Summary</h2>
+  <p><strong>Subtotal:</strong> MVR ${subtotal.toFixed(2)}</p>
+  <p><strong>Service Charge:</strong> MVR ${scTotal.toFixed(2)}</p>
+  <p><strong>GST (8%):</strong> MVR ${gst.toFixed(2)}</p>
+  <p><strong>Total Bill:</strong> MVR ${total.toFixed(2)}</p>
+  <h3>👥 Each Person's Share</h3>`;
+
+  for(let person in personTotals) resultHTML+=`<p class="name-highlight">💳 ${person}</p> <strong>MVR ${personTotals[person].toFixed(2)}</strong>`;
+  document.getElementById("result").innerHTML=resultHTML;
+
+  // Save to history
+  saveHistory({ date: new Date().toISOString(), subtotal, scTotal, gst, total, personTotals });
+  updateAll();
+}
+
+// Save history
+function saveHistory(bill){
+  let history=JSON.parse(localStorage.getItem("billHistory")||"[]");
+  history.unshift(bill);
+  localStorage.setItem("billHistory", JSON.stringify(history));
+}
+
+// Render History with optional date filter
+function renderHistory(){
+  let container=document.getElementById("historyContainer");
+  let history=JSON.parse(localStorage.getItem("billHistory")||"[]");
+  let filterDate=document.getElementById("filterDate").value;
+  if(filterDate) history=history.filter(b=>b.date.startsWith(filterDate));
+  if(history.length===0){ container.innerHTML="<p>No bills found.</p>"; return;}
+  container.innerHTML="";
+  history.forEach((b,i)=>{
+    let displayDate=new Date(b.date).toLocaleString();
+    let html=`<div class="history-entry">
+      <p><strong>Bill #${history.length-i} - ${displayDate}</strong></p>
+      <p>Subtotal: MVR ${b.subtotal.toFixed(2)}, Service Charge: MVR ${b.scTotal.toFixed(2)}, GST: MVR ${b.gst.toFixed(2)}, Total: MVR ${b.total.toFixed(2)}</p>
+      <p>Shares:</p>`;
+    for(let p in b.personTotals) html+=`<p class="name-highlight">💳 ${p}</p> MVR ${b.personTotals[p].toFixed(2)}`;
+    html+="</div>";
+    container.innerHTML+=html;
+  });
+}
+
+// Per Person Summary with color-coded totals
+function renderSummary(){
+  let history=JSON.parse(localStorage.getItem("billHistory")||"[]");
+  if(history.length===0){ document.getElementById("summaryContainer").innerHTML="<p>No data yet.</p>"; return;}
+  let personTotals={};
+  history.forEach(bill=>{
+    for(let person in bill.personTotals){
+      if(!personTotals[person]) personTotals[person]=0;
+      personTotals[person]+=bill.personTotals[person];
+    }
+  });
+
+  // Min/Max for color scaling
+  let totals=Object.values(personTotals);
+  let min=Math.min(...totals);
+  let max=Math.max(...totals);
+
+  let html="";
+  for(let person in personTotals){
+    let value=personTotals[person];
+    let intensity=Math.floor(100 + 155*(value-min)/(max-min||1)); // 100-255
+    let color=`rgb(30,${intensity},229)`;
+    html+=`<p class="name-highlight" style="color:${color}">💳 ${person}</p> <strong>Total: MVR ${value.toFixed(2)}</strong>`;
+  }
+
+  document.getElementById("summaryContainer").innerHTML=html;
+}
+
+// Update history and summary
+function updateAll(){ renderHistory(); renderSummary(); }
+
+// PDF download
+function downloadPDF(){
+  if(items.length===0){ alert("Please calculate the bill first."); return;}
+  const { jsPDF }=window.jspdf;
+  const pdf=new jsPDF('p','pt','a4');
+  const pageWidth=pdf.internal.pageSize.getWidth();
+  let y=40;
+  pdf.setFont("Courier","normal"); pdf.setFontSize(14); pdf.setTextColor(30,136,229);
+  pdf.text("KUDHIN SPLIT BILL", pageWidth/2,y,{align:"center"}); y+=30;
+  pdf.setFontSize(12); pdf.setTextColor(0,0,0);
+  pdf.text("------------------------------------------------------------",40,y); y+=20;
+  let subtotal=items.reduce((sum,i)=>sum+i.price,0);
+  let scPercent=parseFloat(document.getElementById("serviceChargePercent").value)||0;
+  let scAmount=parseFloat(document.getElementById("serviceChargeAmount").value)||0;
+  let scTotal=subtotal*(scPercent/100)+scAmount;
+  let gst=(subtotal+scTotal)*0.08;
+  let total=subtotal+scTotal+gst;
+  items.forEach(it=>{
+    pdf.setTextColor(30,136,229); pdf.text(`${it.name}`,50,y);
+    pdf.setTextColor(0,0,0); pdf.text(`MVR ${it.price.toFixed(2)}`,pageWidth-80,y); y+=20;
+    pdf.text("------------------------------------------------------------",40,y); y+=15;
+  });
+  y+=10;
+  pdf.text(`Subtotal: MVR ${subtotal.toFixed(2)}`,50,y); y+=20;
+  pdf.text(`Service Charge: MVR ${scTotal.toFixed(2)}`,50,y); y+=20;
+  pdf.text(`GST (8%): MVR ${gst.toFixed(2)}`,50,y); y+=20;
+  pdf.text(`Total: MVR ${total.toFixed(2)}`,50,y); y+=30;
+  pdf.text("Each Person's Share:",50,y); y+=20;
+  items.forEach(it=>{
+    let share=it.price/subtotal;
+    let personTotal=it.price+(scTotal*share)+(gst*share);
+    pdf.setTextColor(30,136,229); pdf.text(`${it.name}`,50,y);
+    pdf.setTextColor(0,0,0); pdf.text(`MVR ${personTotal.toFixed(2)}`,pageWidth-80,y); y+=20;
+  });
+  pdf.save("kudhin_bill_receipt.pdf");
+}
+
+// Init
+addRow();
+updateAll();
+</script>
 </body>
 </html>
